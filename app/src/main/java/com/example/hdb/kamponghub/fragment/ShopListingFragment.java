@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -84,27 +86,27 @@ public class ShopListingFragment extends Fragment {
             @Override
             public ShopListHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                return new ShopListHolder(inflater.inflate(R.layout.list_item, viewGroup, false));
+                return new ShopListHolder(inflater.inflate(R.layout.shop_list_item, viewGroup, false));
             }
 
             @Override
             protected void onBindViewHolder(ShopListHolder viewHolder, int position, final Shop model) {
                 //TODO: Method to be added later: To show store details
-                //final DatabaseReference shopRef = getRef(position);
+                final DatabaseReference shopRef = getRef(position);
 
                 // Set click listener for the shop view
-/*
                 final String shopKey = shopRef.getKey();
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // Launch PostDetailActivity
-                        Intent intent = new Intent(getActivity(), ShopDetailActivity.class);
-                        intent.putExtra(ShopDetailActivity.EXTRA_SHOP_KEY, shopKey);
-                        startActivity(intent);
+                        // Launch ShopDetailActivity
+                        Fragment fragment= new ShopDetailFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(ShopDetailFragment.SHOP_DETAIL_KEY, shopKey);
+                        fragment.setArguments(bundle);
+                        goFragment(fragment);
                     }
                 });
-*/
                 viewHolder.bindToList(model,new View.OnClickListener(){
                     @Override
                     public void onClick(View chatView) {
@@ -155,5 +157,14 @@ public class ShopListingFragment extends Fragment {
         // [END recent_store_query]
 
         return recentStoreQuery;
+    }
+
+    private void goFragment(Fragment fragment){
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        //For replace: refers to the FrameLayout in "content_main"
+        ft.replace(R.id.screen_area,fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }

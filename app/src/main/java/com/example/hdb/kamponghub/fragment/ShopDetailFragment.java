@@ -5,12 +5,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hdb.kamponghub.R;
@@ -20,24 +27,29 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
-//Uses in class FirebaseRecycleAdapter
 
 public class ShopDetailFragment extends Fragment {
-    //This constant is for easy referencing for Log purposes
+    //Constants are for easy referencing for Log purposes
     private static final String TAG = ShopDetailFragment.class.getSimpleName();
+    public static final String SHOP_DETAIL_KEY = "shop_detail_key";
 
     //Layout
-    private RecyclerView rvShopList;
-    private LinearLayoutManager layoutManager;
-    private FirebaseRecyclerAdapter<Shop, ShopListHolder> mFirebaseAdapter;
-
+    private ImageView shopImage;
+    private TextView shopName;
+    private TextView isShopOpen;
+    private TextView shopTime;
+    private TextView shopAddress;
     //Firebase variables
-    private DatabaseReference mDatabase;
-    private ChildEventListener mShopListener; //not used
+    private DatabaseReference mShopReference;
+    private String mShopKey;
 
     //Model
     Shop shop;
@@ -49,14 +61,52 @@ public class ShopDetailFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.fragment_shop_listing, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_shop_detail, container, false);
+        // Get shop key from intent
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            mShopKey = bundle.getString(SHOP_DETAIL_KEY, null);
+            if (mShopKey == null) {
+                throw new IllegalArgumentException("Must pass SHOP_DETAIL_KEY");
+            }
+        }
 
-        // [START create_database_reference]
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        // [END create_database_reference]
+        // Initialize Database
+        mShopReference = FirebaseDatabase.getInstance().getReference()
+                .child("shops").child(mShopKey);
 
-        rvShopList = rootView.findViewById(R.id.shopListRecyclerView);
-        rvShopList.setHasFixedSize(true);
+
+
+        // Initialize Views
+        shopImage = rootView.findViewById(R.id.shopImage);
+        shopName = rootView.findViewById(R.id.shopName);
+        isShopOpen = rootView.findViewById(R.id.isShopOpen);
+        shopTime = rootView.findViewById(R.id.shopTime);
+        shopAddress=rootView.findViewById(R.id.shopAddress);
+
+        //Get data
+        // Attach a listener to read the data at shops reference
+        mShopReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                 Shop shop = dataSnapshot.getValue(Shop.class);
+                  setImage(shop.getShopImageUrl());
+                 shopName.setText(shop.getShopname());
+                isShopOpen.setText("Function to calculate");
+                shopTime.setText("Function to calculate");
+                  shopAddress.setText(shop.getShopAddress());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Shop failed, log a message
+                Log.w(TAG, "loadShop:onCancelled", databaseError.toException());
+                // [START_EXCLUDE]
+                Toast.makeText(getContext(), "Failed to load shop details.",
+                        Toast.LENGTH_SHORT).show();
+                // [END_EXCLUDE]
+            }
+        });
 
         return rootView;
 
@@ -65,77 +115,19 @@ public class ShopDetailFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Set up Layout Manager, reverse layout
-        layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setReverseLayout(true);
-        layoutManager.setStackFromEnd(true);
-        rvShopList.setLayoutManager(layoutManager);
 
-        // Set up FirebaseRecyclerAdapter with the Query
-        Query shopQuery = getQuery(mDatabase);
-
-        FirebaseRecyclerOptions options = new FirebaseRecyclerOptions.Builder<Shop>()
-                .setQuery(shopQuery, Shop.class)
-                .build();
-
-        //Configure adapter
-        mFirebaseAdapter = new FirebaseRecyclerAdapter<Shop, ShopListHolder>(options) {
-
-            @Override
-            public ShopListHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-                LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                return new ShopListHolder(inflater.inflate(R.layout.list_item, viewGroup, false));
-            }
-
-            @Override
-            protected void onBindViewHolder(ShopListHolder viewHolder, int position, final Shop model) {
-                //TODO: Method to be added later: To show store details
-                //final DatabaseReference shopRef = getRef(position);
-
-                // Set click listener for the shop view
-/*
-                final String shopKey = shopRef.getKey();
-                viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // Launch PostDetailActivity
-                        Intent intent = new Intent(getActivity(), ShopDetailActivity.class);
-                        intent.putExtra(ShopDetailActivity.EXTRA_SHOP_KEY, shopKey);
-                        startActivity(intent);
-                    }
-                });
-*/
-                viewHolder.bindToList(model,new View.OnClickListener(){
-                    @Override
-                    public void onClick(View chatView) {
-                        Toast.makeText(getActivity(),model.getShopname(),Toast.LENGTH_SHORT).show();
-                     }
-                });
-            }
-        };
-        //Set divider between items
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvShopList.getContext(),
-                layoutManager.getOrientation());
-        rvShopList.addItemDecoration(dividerItemDecoration);
-
-        //Set adapter
-        rvShopList.setAdapter(mFirebaseAdapter);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if (mFirebaseAdapter != null) {
-            mFirebaseAdapter.startListening();
-        }
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mFirebaseAdapter != null) {
-            mFirebaseAdapter.stopListening();
-        }
+
     }
 
     public String getUid() {
@@ -155,5 +147,21 @@ public class ShopDetailFragment extends Fragment {
         // [END recent_store_query]
 
         return recentStoreQuery;
+    }
+
+    private void goFragment(Fragment fragment){
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        //For replace: refers to the FrameLayout in "content_main"
+        ft.replace(R.id.screen_area,fragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void setImage(String imageUrl)
+    {
+        Picasso.with(this.getContext())
+                .load(imageUrl)
+                .into(shopImage);
     }
 }

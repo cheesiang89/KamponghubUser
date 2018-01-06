@@ -111,6 +111,12 @@ public class NavigationActivity extends AppCompatActivity {
             case R.id.menu_search:
                 Toast.makeText(this,"Search",Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.navigation_profile:
+                // mTextMessage.setText(R.string.title_profile);
+                Toast.makeText(NavigationActivity.this, "Profile", Toast.LENGTH_SHORT).show();
+                fragment= new ProfileFragment();
+                goFragment(fragment);
+                return true;
             case R.id.menu_logout:
                 logOut();
                 startActivity(new Intent(this, MainActivity.class));
@@ -148,12 +154,7 @@ public class NavigationActivity extends AppCompatActivity {
                    fragment = new BookMarkFragment();
                     goFragment(fragment);
                     return true;
-                case R.id.navigation_profile:
-                   // mTextMessage.setText(R.string.title_profile);
-                    Toast.makeText(NavigationActivity.this, "Profile", Toast.LENGTH_SHORT).show();
-                    fragment= new ProfileFragment();
-                    goFragment(fragment);
-                    return true;
+
             }
 
             return false;
