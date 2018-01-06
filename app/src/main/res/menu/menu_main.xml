@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    //Search
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/ic_search"
+        android:orderInCategory="100"
+        android:title="Search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
+    //Item
     <item
         android:id="@+id/menu_filter"
         android:icon="@drawable/ic_filter"
         android:orderInCategory="100"
         android:title="Search"
         app:showAsAction="ifRoom" />
+    //Profile
     <item
-        android:id="@+id/menu_search"
-        android:icon="@drawable/ic_search"
-        android:orderInCategory="100"
-        android:title="Search"
-        app:showAsAction="ifRoom" />
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/ic_profile"
+        android:title="@string/title_profile"
+        app:showAsAction="ifRoom"/>
+    //Logout
     <item
         android:id="@+id/menu_logout"
         android:icon="@drawable/ic_logout"

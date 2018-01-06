@@ -45,7 +45,6 @@ public class ShopListHolder extends RecyclerView.ViewHolder{
     }
     public void setShopName(String title)
     {
-
         shopName.setText(title);
     }
 
