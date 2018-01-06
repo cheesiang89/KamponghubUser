@@ -7,24 +7,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.hdb.kamponghub.R;
 import com.example.hdb.kamponghub.models.Shop;
-import com.example.hdb.kamponghub.viewholder.ShopListHolder;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -36,7 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 
-public class ShopDetailFragment extends Fragment {
+public class ShopDetailFragment extends Fragment{
     //Constants are for easy referencing for Log purposes
     private static final String TAG = ShopDetailFragment.class.getSimpleName();
     public static final String SHOP_DETAIL_KEY = "shop_detail_key";
@@ -47,9 +39,13 @@ public class ShopDetailFragment extends Fragment {
     private TextView isShopOpen;
     private TextView shopTime;
     private TextView shopAddress;
+    private Fragment fragment;
+
+
     //Firebase variables
     private DatabaseReference mShopReference;
     private String mShopKey;
+
 
     //Model
     Shop shop;
@@ -107,9 +103,15 @@ public class ShopDetailFragment extends Fragment {
                 // [END_EXCLUDE]
             }
         });
+               return rootView;
+    }
 
-        return rootView;
-
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+         fragment = new MapsFragment();
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.replace(R.id.childFragmentContainer, fragment).commit();
     }
 
     @Override
@@ -164,4 +166,5 @@ public class ShopDetailFragment extends Fragment {
                 .load(imageUrl)
                 .into(shopImage);
     }
-}
+
+    }

@@ -24,7 +24,13 @@
         android:title="@string/title_profile"
         android:orderInCategory="3"
         app:showAsAction="ifRoom"/>
-
+    //Maps
+    <item
+        android:id="@+id/menu_maps"
+        android:icon="@drawable/ic_edit_location"
+        android:orderInCategory="5"
+        android:title="Maps"
+        app:showAsAction="never" />
     //Logout
     <item
         android:id="@+id/menu_logout"

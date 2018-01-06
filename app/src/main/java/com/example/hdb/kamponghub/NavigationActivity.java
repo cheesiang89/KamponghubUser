@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.hdb.kamponghub.fragment.BookMarkFragment;
 import com.example.hdb.kamponghub.fragment.ChatFragment;
+import com.example.hdb.kamponghub.fragment.MapsFragment;
 import com.example.hdb.kamponghub.fragment.ProfileFragment;
 import com.example.hdb.kamponghub.fragment.ShopListingFragment;
 import com.facebook.AccessToken;
@@ -122,6 +123,10 @@ public class NavigationActivity extends AppCompatActivity {
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
                 return true;
+            case R.id.menu_maps:
+                fragment= new MapsFragment();
+                goFragment(fragment);
+                return true;
             //return super.onOptionsItemSelected(item);
         }
         return false;
@@ -156,7 +161,6 @@ public class NavigationActivity extends AppCompatActivity {
                     return true;
 
             }
-
             return false;
         }
     };
