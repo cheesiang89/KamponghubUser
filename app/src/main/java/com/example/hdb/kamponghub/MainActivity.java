@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
                 loginRequest();
             }
     });
+
     }
 
     //method to login user using email and password
@@ -112,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         login_button.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult login_result) {
-                Intent intent = new Intent(MainActivity.this, HomePage.class);
+                Intent intent = new Intent(MainActivity.this, NavigationActivity.class);
                 startActivity(intent);
                 AccessToken AT = AccessToken.getCurrentAccessToken();
                 Log.d("access token", AT.toString());

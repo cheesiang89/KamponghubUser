@@ -1,6 +1,7 @@
 package com.example.hdb.kamponghub.fragment;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,6 +37,7 @@ public class ShopListingFragment extends Fragment {
     private RecyclerView rvShopList;
     private LinearLayoutManager layoutManager;
     private FirebaseRecyclerAdapter<Shop, ShopListHolder> mFirebaseAdapter;
+    private ProgressDialog dialog;
 
     //Firebase variables
     private DatabaseReference mDatabase;
@@ -59,7 +61,9 @@ public class ShopListingFragment extends Fragment {
 
         rvShopList = rootView.findViewById(R.id.shopListRecyclerView);
         rvShopList.setHasFixedSize(true);
-
+        dialog = new ProgressDialog(getActivity());
+        dialog.setMessage("Loading data.");
+        dialog.show();
         return rootView;
 
     }
@@ -82,7 +86,13 @@ public class ShopListingFragment extends Fragment {
 
         //Configure adapter
         mFirebaseAdapter = new FirebaseRecyclerAdapter<Shop, ShopListHolder>(options) {
-
+            @Override
+            public void onDataChanged() {
+                super.onDataChanged();
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            }
             @Override
             public ShopListHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());

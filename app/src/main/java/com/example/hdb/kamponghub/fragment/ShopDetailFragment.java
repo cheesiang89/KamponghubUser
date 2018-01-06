@@ -1,6 +1,7 @@
 package com.example.hdb.kamponghub.fragment;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -40,7 +41,7 @@ public class ShopDetailFragment extends Fragment{
     private TextView shopTime;
     private TextView shopAddress;
     private Fragment fragment;
-
+    private ProgressDialog dialog;
 
     //Firebase variables
     private DatabaseReference mShopReference;
@@ -70,7 +71,9 @@ public class ShopDetailFragment extends Fragment{
         // Initialize Database
         mShopReference = FirebaseDatabase.getInstance().getReference()
                 .child("shops").child(mShopKey);
-
+        dialog = new ProgressDialog(getActivity());
+        dialog.setMessage("Loading data.");
+        dialog.show();
 
 
         // Initialize Views
@@ -79,6 +82,7 @@ public class ShopDetailFragment extends Fragment{
         isShopOpen = rootView.findViewById(R.id.isShopOpen);
         shopTime = rootView.findViewById(R.id.shopTime);
         shopAddress=rootView.findViewById(R.id.shopAddress);
+
 
         //Get data
         // Attach a listener to read the data at shops reference
@@ -91,6 +95,9 @@ public class ShopDetailFragment extends Fragment{
                 isShopOpen.setText("Function to calculate");
                 shopTime.setText("Function to calculate");
                   shopAddress.setText(shop.getShopAddress());
+                if (dialog != null && dialog.isShowing()) {
+                    dialog.dismiss();
+                }
             }
 
             @Override
