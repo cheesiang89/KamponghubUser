@@ -32,7 +32,7 @@ import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class NavigationActivity extends AppCompatActivity {
-
+//This is a test
     //private TextView mTextMessage;
    // private ImageButton chatBtn;
    private String UserEmail;
