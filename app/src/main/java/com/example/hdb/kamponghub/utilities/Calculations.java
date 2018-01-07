@@ -9,7 +9,7 @@ public class Calculations {
 
     }
     public static String calcTime(String timeStart, String timeEnd){
-         if (timeStart=="0000"){
+         if (timeStart==timeEnd){
             return "24hrs";
         }
         else{
