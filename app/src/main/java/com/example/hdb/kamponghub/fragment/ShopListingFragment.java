@@ -120,7 +120,7 @@ public class ShopListingFragment extends Fragment {
                 viewHolder.bindToList(model,new View.OnClickListener(){
                     @Override
                     public void onClick(View chatView) {
-                        Toast.makeText(getActivity(),model.getShopname(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),model.getShopName(),Toast.LENGTH_SHORT).show();
                      }
                 });
             }

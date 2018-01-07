@@ -27,6 +27,12 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     GoogleMap mGoogleMap;
     MapView mapView;
     View mView;
+    public static final String SHOP_LATITUDE_KEY = "shop_latitude_key";
+    public static final String SHOP_LONGTITUDE_KEY = "shop_longtitude_key";
+
+    private String mLat;
+    private String mLong;
+    private LatLng latLng;
 
     public MapsFragment() {
         // Required empty public constructor
@@ -38,6 +44,13 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
        mView = inflater.inflate(R.layout.fragment_maps, container, false);
+        // Get long/lat key from intent
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            mLat = bundle.getString(SHOP_LATITUDE_KEY, null);
+            mLong = bundle.getString(SHOP_LONGTITUDE_KEY, null);
+
+        }
        return mView;
     }
 
@@ -57,8 +70,11 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         MapsInitializer.initialize(getContext());
         mGoogleMap=googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        //  LatLng latLng = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
-        LatLng latLng = new LatLng(40.689247,-74.044502);
+        if ((mLat!=null && !mLat.isEmpty()) && (mLong!=null && !mLong.isEmpty())){
+             latLng = new LatLng(Double.parseDouble(mLat), Double.parseDouble(mLong));
+        }else{
+               latLng = new LatLng(40.689247, -74.044502);
+            }
         googleMap.addMarker(new MarkerOptions().position(latLng)
         .title("statue")
         .snippet("Woohoo"));
